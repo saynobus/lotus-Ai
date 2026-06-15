@@ -1,3 +1,5 @@
 fastapi
 uvicorn
-sounddevice
+pydantic
+groq
+python-dotenv
