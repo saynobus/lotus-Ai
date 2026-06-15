@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: lotus-server
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn lotus:app --host 0.0.0.0 --port 10000"
+    envVars:
+      - key: DISABLE_POETRY
+        value: "true"
+      - key: SOUNDDEVICE_DUMMY
+        value: "1"
