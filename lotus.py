@@ -13,10 +13,15 @@ app = FastAPI(title="Lotus Voice AI")
 api_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=api_key) if api_key else None
 
+# === YE MISSING THA PICHLE CODE ME ===
+CONFIG = {
+    "LLM_MODEL": "llama-3.1-8b-instant"
+}
+# =====================================
+
 class ChatRequest(BaseModel):
     message: str
 
-# UI Implementation - Root path par ek button wala clean interface dikhega
 @app.get("/", response_class=HTMLResponse)
 def get_ui():
     return """
@@ -80,14 +85,13 @@ def get_ui():
             const startBtn = document.getElementById('startBtn');
             const statusText = document.getElementById('statusText');
             
-            // Browser Speech API Setup
             const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!Recognition) {
                 alert("Your browser doesn't support Speech Recognition. Use Chrome/Edge.");
             }
             const recognition = new Recognition();
             recognition.continuous = false;
-            recognition.lang = 'hi-IN'; // Listens to Hindi/Hinglish
+            recognition.lang = 'hi-IN';
 
             function toggleAI() {
                 if (!isRunning) {
@@ -118,7 +122,6 @@ def get_ui():
                 const userText = event.results[0][0].transcript;
                 statusText.innerText = "You: " + userText;
                 
-                // Call Groq FastAPI Backend
                 try {
                     const response = await fetch('/chat', {
                         method: 'POST',
@@ -130,7 +133,6 @@ def get_ui():
                     if (data.reply) {
                         statusText.innerText = "Lotus: " + data.reply;
                         speak(data.reply, () => {
-                            // Infinite Loop: Speak khatam hone ke baad firse sunna shuru karega
                             if (isRunning) startListening();
                         });
                     } else {
@@ -147,7 +149,6 @@ def get_ui():
             };
 
             recognition.onend = () => {
-                // Keep trying to listen if it stopped without result
                 if (isRunning && statusText.innerText.includes("Listening")) {
                     startListening();
                 }
@@ -156,7 +157,7 @@ def get_ui():
             function speak(text, callback) {
                 window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'hi-IN'; // Indian voice accent
+                utterance.lang = 'hi-IN';
                 utterance.onend = callback;
                 window.speechSynthesis.speak(utterance);
             }
